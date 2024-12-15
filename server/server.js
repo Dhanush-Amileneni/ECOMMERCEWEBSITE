@@ -2,6 +2,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const path = require('path');  // Added to handle static paths
+
+// Routes
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
 const adminOrderRouter = require("./routes/admin/order-routes");
@@ -15,9 +18,6 @@ const shopReviewRouter = require("./routes/shop/review-routes");
 
 const commonFeatureRouter = require("./routes/common/feature-routes");
 
-
-
-
 mongoose.connect('mongodb+srv://dhanush123:dhanush123@cluster0.f0sje.mongodb.net/')
         .then(()=> console.log('MongoDB connected'))
         .catch((error) => console.log(error));
@@ -25,6 +25,7 @@ mongoose.connect('mongodb+srv://dhanush123:dhanush123@cluster0.f0sje.mongodb.net
 const app = express()
 const PORT = process.env.PORT || 5011;
 
+// Middlewares
 app.use(
     cors({
         origin : 'http://localhost:5173',
@@ -41,6 +42,11 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+
+// Static File serving
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/admin/orders", adminOrderRouter);
@@ -54,6 +60,5 @@ app.use("/api/shop/review", shopReviewRouter);
 
 app.use("/api/common/feature", commonFeatureRouter);
 
-
-
+// Server
 app.listen(PORT, ()=> console.log('Server is now running on port '+PORT));
